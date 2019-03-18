@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.438
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLiteImportForms", "SQLiteImportForms\SQLiteImportForms.csproj", "{820BF273-8AFE-471C-9E27-BE7EB926446A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "u724.Core", "u724.Core\u724.Core.csproj", "{896C1035-4E9D-4ABB-8CBC-AADAA4988A2F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{820BF273-8AFE-471C-9E27-BE7EB926446A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{820BF273-8AFE-471C-9E27-BE7EB926446A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{820BF273-8AFE-471C-9E27-BE7EB926446A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{820BF273-8AFE-471C-9E27-BE7EB926446A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{896C1035-4E9D-4ABB-8CBC-AADAA4988A2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{896C1035-4E9D-4ABB-8CBC-AADAA4988A2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{896C1035-4E9D-4ABB-8CBC-AADAA4988A2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{896C1035-4E9D-4ABB-8CBC-AADAA4988A2F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E8B53399-2C3C-45DA-9693-1114C4AFD35D}
+	EndGlobalSection
+EndGlobal
