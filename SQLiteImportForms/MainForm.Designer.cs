@@ -28,34 +28,54 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.button1 = new System.Windows.Forms.Button();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.btnUpdte = new System.Windows.Forms.Button();
+            this.txtSQLite = new System.Windows.Forms.TextBox();
+            this.txtBak = new System.Windows.Forms.TextBox();
+            this.btnBak = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // button1
+            // btnUpdte
             // 
-            this.button1.Location = new System.Drawing.Point(435, 82);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnUpdte.Location = new System.Drawing.Point(345, 80);
+            this.btnUpdte.Name = "btnUpdte";
+            this.btnUpdte.Size = new System.Drawing.Size(75, 23);
+            this.btnUpdte.TabIndex = 0;
+            this.btnUpdte.Text = "更新";
+            this.btnUpdte.UseVisualStyleBackColor = true;
+            this.btnUpdte.Click += new System.EventHandler(this.button1_Click);
             // 
-            // textBox1
+            // txtSQLite
             // 
-            this.textBox1.Location = new System.Drawing.Point(102, 82);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(311, 21);
-            this.textBox1.TabIndex = 1;
+            this.txtSQLite.Location = new System.Drawing.Point(12, 80);
+            this.txtSQLite.Name = "txtSQLite";
+            this.txtSQLite.Size = new System.Drawing.Size(311, 21);
+            this.txtSQLite.TabIndex = 1;
+            // 
+            // txtBak
+            // 
+            this.txtBak.Location = new System.Drawing.Point(12, 33);
+            this.txtBak.Name = "txtBak";
+            this.txtBak.Size = new System.Drawing.Size(311, 21);
+            this.txtBak.TabIndex = 2;
+            // 
+            // btnBak
+            // 
+            this.btnBak.Location = new System.Drawing.Point(345, 31);
+            this.btnBak.Name = "btnBak";
+            this.btnBak.Size = new System.Drawing.Size(75, 23);
+            this.btnBak.TabIndex = 3;
+            this.btnBak.Text = "Bak文件";
+            this.btnBak.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(565, 248);
-            this.Controls.Add(this.textBox1);
-            this.Controls.Add(this.button1);
+            this.ClientSize = new System.Drawing.Size(436, 138);
+            this.Controls.Add(this.btnBak);
+            this.Controls.Add(this.txtBak);
+            this.Controls.Add(this.txtSQLite);
+            this.Controls.Add(this.btnUpdte);
             this.Name = "MainForm";
             this.Text = "Form1";
             this.ResumeLayout(false);
@@ -65,8 +85,10 @@
 
         #endregion
 
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button btnUpdte;
+        private System.Windows.Forms.TextBox txtSQLite;
+        private System.Windows.Forms.TextBox txtBak;
+        private System.Windows.Forms.Button btnBak;
     }
 }
 

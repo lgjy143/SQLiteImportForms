@@ -17,6 +17,7 @@ using System.IO;
 using System.Reflection;
 using Autofac;
 using u724.Core.Entities;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace SQLiteImportForms
 {
@@ -33,7 +34,7 @@ namespace SQLiteImportForms
 
             builder.RegisterAssemblyTypes(Assembly.LoadFrom("u724.Core.dll")).Where(t => t.Name.EndsWith("Model"));
 
-            IOCManager = builder.Build(); 
+            IOCManager = builder.Build();
 
             #endregion
 
@@ -42,7 +43,9 @@ namespace SQLiteImportForms
 
         public void LoadForm()
         {
-            textBox1.Text = @"H:\2019\WorkDemo\SQLiteImportForms\GridDB_SQLite";
+            txtBak.Text = @"D:\2019\SourceCode\SQLiteImportForms\clothconfig_20190314134040031.bak";
+
+            txtSQLite.Text = @"D:\2019\SourceCode\SQLiteImportForms\GridDB_SQLite";
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -52,16 +55,32 @@ namespace SQLiteImportForms
             var gridInfoModel2 = IOCManager.Resolve<GridInfoModel>();
             gridInfoModel2.GridName = "2";
 
-            
+            DataSet ds = null;
+
+            using (var fs = new FileStream(txtBak.Text, FileMode.Open))
+            {
+                byte[] buffer = new byte[fs.Length];
+                fs.Read(buffer, 0, Convert.ToInt32(fs.Length));
+                fs.Close();
+
+                ds = ResolveDataSet(buffer);
+            }
+
+            if (ds == null && ds.Tables.Count < 1)
+            {
+
+            }
 
 
-            if (string.IsNullOrEmpty(textBox1.Text))
+            return;
+
+            if (string.IsNullOrEmpty(txtSQLite.Text))
             {
                 MessageBox.Show("SQLite为空.");
                 return;
             }
 
-            var sqliteConnStr = new SQLiteConnectionStringBuilder() { DataSource = textBox1.Text, Version = 3 };
+            var sqliteConnStr = new SQLiteConnectionStringBuilder() { DataSource = txtSQLite.Text, Version = 3 };
 
             using (var dh = new DapperHelper(sqliteConnStr.ToString(), ConnectionFactory.DatabaseType.Sqlite))
             {
@@ -69,105 +88,119 @@ namespace SQLiteImportForms
             }
 
 
-        //     /// <summary>    
-        //     /// 实体转换辅助类    
-        //     /// </summary>    
-        //public class ModelConvertHelper<T> where T : new()
-        //{
-        //    public static IList<T> ConvertToModel(DataTable dt)
-        //    {
-        //        // 定义集合    
-        //        IList<T> ts = new List<T>();
+            //     /// <summary>    
+            //     /// 实体转换辅助类    
+            //     /// </summary>    
+            //public class ModelConvertHelper<T> where T : new()
+            //{
+            //    public static IList<T> ConvertToModel(DataTable dt)
+            //    {
+            //        // 定义集合    
+            //        IList<T> ts = new List<T>();
 
-        //        // 获得此模型的类型   
-        //        Type type = typeof(T);
-        //        string tempName = "";
+            //        // 获得此模型的类型   
+            //        Type type = typeof(T);
+            //        string tempName = "";
 
-        //        foreach (DataRow dr in dt.Rows)
-        //        {
-        //            T t = new T();
-        //            // 获得此模型的公共属性      
-        //            PropertyInfo[] propertys = t.GetType().GetProperties();
-        //            foreach (PropertyInfo pi in propertys)
-        //            {
-        //                tempName = pi.Name;  // 检查DataTable是否包含此列    
+            //        foreach (DataRow dr in dt.Rows)
+            //        {
+            //            T t = new T();
+            //            // 获得此模型的公共属性      
+            //            PropertyInfo[] propertys = t.GetType().GetProperties();
+            //            foreach (PropertyInfo pi in propertys)
+            //            {
+            //                tempName = pi.Name;  // 检查DataTable是否包含此列    
 
-        //                if (dt.Columns.Contains(tempName))
-        //                {
-        //                    // 判断此属性是否有Setter      
-        //                    if (!pi.CanWrite) continue;
+            //                if (dt.Columns.Contains(tempName))
+            //                {
+            //                    // 判断此属性是否有Setter      
+            //                    if (!pi.CanWrite) continue;
 
-        //                    object value = dr[tempName];
-        //                    if (value != DBNull.Value)
-        //                        pi.SetValue(t, value, null);
-        //                }
-        //            }
-        //            ts.Add(t);
-        //        }
-        //        return ts;
-        //    }
-        //}
-
-
-
-
-        //using (var dp = new DapperHelper())
-        //{
-        //    //var tran = dp.TranStart();
-        //    //var obj = new USER() { FID = "test222", FNAME = "test", FCREATETIME = DateTime.Now, FREALNAME = "t" };
-        //    ////事务回滚
-        //    //var insert = dp.Insert(obj, tran);
-        //    //var user2 = dp.Get<USER>("test222", tran);
-        //    //Assert.IsTrue(user2 != null);
-        //    //tran.Rollback();
-        //    //var user3 = dp.Get<USER>("test222");
-        //    //Assert.IsTrue(user3 == null);
-        //    ////事务提交
-        //    //tran = dp.TranStart();
-        //    //insert = dp.Insert(obj, tran);
-        //    //Assert.IsTrue(user2 != null);
-        //    //tran.Commit();
-        //    //user3 = dp.Get<USER>("test222");
-        //    //Assert.IsTrue(user3 != null);
-        //    ////删除测试数据
-        //    //bool isdel = dp.Delete(obj);
-        //    //Assert.IsTrue(isdel);
-        //}
+            //                    object value = dr[tempName];
+            //                    if (value != DBNull.Value)
+            //                        pi.SetValue(t, value, null);
+            //                }
+            //            }
+            //            ts.Add(t);
+            //        }
+            //        return ts;
+            //    }
+            //}
 
 
 
 
-        ////Sqlite使用事务批量操作 极大的提高速度
-        //DateTime starttime = DateTime.Now;
-        //using (SQLiteConnection con = new SQLiteConnection(connStr))
-        //{
-        //    con.Open();
-        //    DbTransaction trans = con.BeginTransaction();//开始事务     
-        //    SQLiteCommand cmd = new SQLiteCommand(con);
-        //    try
-        //    {
-        //        cmd.CommandText = "INSERT INTO MyTable(username,useraddr,userage) VALUES(@a,@b,@c)";
-        //        for (int n = 0; n < 100000; n++)
-        //        {
-        //            cmd.Parameters.Add(new SQLiteParameter("@a", DbType.String)); //MySql 使用MySqlDbType.String
-        //            cmd.Parameters.Add(new SQLiteParameter("@b", DbType.String)); //MySql 引用MySql.Data.dll
-        //            cmd.Parameters.Add(new SQLiteParameter("@c", DbType.String));
-        //            cmd.Parameters["@a"].Value = "张三" + n;
-        //            cmd.Parameters["@b"].Value = "深圳" + n;
-        //            cmd.Parameters["@c"].Value = 10 + n;
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //        trans.Commit();//提交事务  
-        //        DateTime endtime = DateTime.Now;
-        //        MessageBox.Show("插入成功，用时" + (endtime - starttime).TotalMilliseconds);
+            //using (var dp = new DapperHelper())
+            //{
+            //    //var tran = dp.TranStart();
+            //    //var obj = new USER() { FID = "test222", FNAME = "test", FCREATETIME = DateTime.Now, FREALNAME = "t" };
+            //    ////事务回滚
+            //    //var insert = dp.Insert(obj, tran);
+            //    //var user2 = dp.Get<USER>("test222", tran);
+            //    //Assert.IsTrue(user2 != null);
+            //    //tran.Rollback();
+            //    //var user3 = dp.Get<USER>("test222");
+            //    //Assert.IsTrue(user3 == null);
+            //    ////事务提交
+            //    //tran = dp.TranStart();
+            //    //insert = dp.Insert(obj, tran);
+            //    //Assert.IsTrue(user2 != null);
+            //    //tran.Commit();
+            //    //user3 = dp.Get<USER>("test222");
+            //    //Assert.IsTrue(user3 != null);
+            //    ////删除测试数据
+            //    //bool isdel = dp.Delete(obj);
+            //    //Assert.IsTrue(isdel);
+            //}
 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show(ex.Message);
-        //    }
-        //}
-    }
+
+
+
+            ////Sqlite使用事务批量操作 极大的提高速度
+            //DateTime starttime = DateTime.Now;
+            //using (SQLiteConnection con = new SQLiteConnection(connStr))
+            //{
+            //    con.Open();
+            //    DbTransaction trans = con.BeginTransaction();//开始事务     
+            //    SQLiteCommand cmd = new SQLiteCommand(con);
+            //    try
+            //    {
+            //        cmd.CommandText = "INSERT INTO MyTable(username,useraddr,userage) VALUES(@a,@b,@c)";
+            //        for (int n = 0; n < 100000; n++)
+            //        {
+            //            cmd.Parameters.Add(new SQLiteParameter("@a", DbType.String)); //MySql 使用MySqlDbType.String
+            //            cmd.Parameters.Add(new SQLiteParameter("@b", DbType.String)); //MySql 引用MySql.Data.dll
+            //            cmd.Parameters.Add(new SQLiteParameter("@c", DbType.String));
+            //            cmd.Parameters["@a"].Value = "张三" + n;
+            //            cmd.Parameters["@b"].Value = "深圳" + n;
+            //            cmd.Parameters["@c"].Value = 10 + n;
+            //            cmd.ExecuteNonQuery();
+            //        }
+            //        trans.Commit();//提交事务  
+            //        DateTime endtime = DateTime.Now;
+            //        MessageBox.Show("插入成功，用时" + (endtime - starttime).TotalMilliseconds);
+
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        MessageBox.Show(ex.Message);
+            //    }
+            //}
+        }
+
+        private DataSet ResolveDataSet(byte[] buffer)
+        {
+            var ds = new DataSet();
+
+            var ms = new MemoryStream(buffer);
+            //产生二进制序列化格式,序列化成对象
+            var obj = new BinaryFormatter().Deserialize(ms);
+            if (obj == null) return ds;
+
+            if (obj is DataSet) return (DataSet)obj;
+
+            return ds;
+        }
 
         private void TestWebRequest()
         {
