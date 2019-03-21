@@ -43,17 +43,17 @@ namespace SQLiteImportForms
 
         public void LoadForm()
         {
-            txtBak.Text = @"D:\2019\SourceCode\SQLiteImportForms\clothconfig_20190314134040031.bak";
+            txtBak.Text = @"H:\2019\WorkDemo\SQLiteImportForms\clothconfig_20190314134040031.bak";
 
-            txtSQLite.Text = @"D:\2019\SourceCode\SQLiteImportForms\GridDB_SQLite";
+            txtSQLite.Text = @"H:\2019\WorkDemo\SQLiteImportForms\GridDB_SQLite.db";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var gridInfoModel = IOCManager.Resolve<GridInfoModel>();
-            gridInfoModel.GridName = "1";
-            var gridInfoModel2 = IOCManager.Resolve<GridInfoModel>();
-            gridInfoModel2.GridName = "2";
+            //var gridInfoModel = IOCManager.Resolve<GridInfoModel>();
+            //gridInfoModel.GridName = "1";
+            //var gridInfoModel2 = IOCManager.Resolve<GridInfoModel>();
+            //gridInfoModel2.GridName = "2";
 
             DataSet ds = null;
 
@@ -66,66 +66,60 @@ namespace SQLiteImportForms
                 ds = ResolveDataSet(buffer);
             }
 
+            var tablename = "HYGRID_GridInfo";
+
             if (ds == null && ds.Tables.Count < 1)
             {
-
-            }
-
-
-            return;
-
-            if (string.IsNullOrEmpty(txtSQLite.Text))
-            {
-                MessageBox.Show("SQLite为空.");
+                MessageBox.Show("bak导入文件为空.");
                 return;
             }
 
             var sqliteConnStr = new SQLiteConnectionStringBuilder() { DataSource = txtSQLite.Text, Version = 3 };
 
-            using (var dh = new DapperHelper(sqliteConnStr.ToString(), ConnectionFactory.DatabaseType.Sqlite))
+            foreach (DataTable item in ds.Tables)
             {
-                var dt = dh.QueryDataTable(" select * from hygrid_gridinfo ");
+                if (item.TableName.ToLower() == tablename.ToLower())
+                {
+                    var listModel = ModelConvertHelper<GridInfoModel>.ConvertToModel(item);
+
+                    if (listModel == null) continue;
+
+                    using (var dp = new DapperHelper(sqliteConnStr.ToString(), ConnectionFactory.DatabaseType.Sqlite))
+                    {
+                        var tran = dp.TranStart();
+                        try
+                        {
+                            dp.Execute<GridInfoModel>(" delete from " + item.TableName.ToLower(), tran);
+                            dp.Insert<GridInfoModel>(listModel, tran);
+                            tran.Commit();
+                        }
+                        catch (Exception ex)
+                        {
+                            tran.Rollback();
+                            MessageBox.Show(ex.Message);
+                        }
+                    }
+                }
             }
 
 
-            //     /// <summary>    
-            //     /// 实体转换辅助类    
-            //     /// </summary>    
-            //public class ModelConvertHelper<T> where T : new()
+            return;
+
+            //if (string.IsNullOrEmpty(txtSQLite.Text))
             //{
-            //    public static IList<T> ConvertToModel(DataTable dt)
-            //    {
-            //        // 定义集合    
-            //        IList<T> ts = new List<T>();
-
-            //        // 获得此模型的类型   
-            //        Type type = typeof(T);
-            //        string tempName = "";
-
-            //        foreach (DataRow dr in dt.Rows)
-            //        {
-            //            T t = new T();
-            //            // 获得此模型的公共属性      
-            //            PropertyInfo[] propertys = t.GetType().GetProperties();
-            //            foreach (PropertyInfo pi in propertys)
-            //            {
-            //                tempName = pi.Name;  // 检查DataTable是否包含此列    
-
-            //                if (dt.Columns.Contains(tempName))
-            //                {
-            //                    // 判断此属性是否有Setter      
-            //                    if (!pi.CanWrite) continue;
-
-            //                    object value = dr[tempName];
-            //                    if (value != DBNull.Value)
-            //                        pi.SetValue(t, value, null);
-            //                }
-            //            }
-            //            ts.Add(t);
-            //        }
-            //        return ts;
-            //    }
+            //    MessageBox.Show("SQLite为空.");
+            //    return;
             //}
+
+            //var sqliteConnStr = new SQLiteConnectionStringBuilder() { DataSource = txtSQLite.Text, Version = 3 };
+
+            //using (var dh = new DapperHelper(sqliteConnStr.ToString(), ConnectionFactory.DatabaseType.Sqlite))
+            //{
+            //    var dt = dh.QueryDataTable(" select * from hygrid_gridinfo ");
+            //}
+
+
+
 
 
 
@@ -188,7 +182,124 @@ namespace SQLiteImportForms
             //}
         }
 
-        private DataSet ResolveDataSet(byte[] buffer)
+
+    //    #region MyRegion
+
+    //    namespace YourNamespace
+    //{
+    //    /// <summary>
+    //    /// Uses the Name value of the ColumnAttribute specified, otherwise maps as usual.
+    //    /// </summary>
+    //    /// <typeparam name="T">The type of the object that this mapper applies to.</typeparam>
+    //    public class ColumnAttributeTypeMapper<T> : FallbackTypeMapper
+    //    {
+    //        public ColumnAttributeTypeMapper()
+    //            : base(new SqlMapper.ITypeMap[]
+    //                {
+    //                new CustomPropertyTypeMap(
+    //                   typeof(T),
+    //                   (type, columnName) =>
+    //                       type.GetProperties().FirstOrDefault(prop =>
+    //                           prop.GetCustomAttributes(false)
+    //                               .OfType<ColumnMappingAttribute>()
+    //                               .Any(attr => attr.Name == columnName)
+    //                           )
+    //                   ),
+    //                new DefaultTypeMap(typeof(T))
+    //                })
+    //        {
+    //        }
+    //    }
+
+    //    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+    //    public class ColumnMappingAttribute : Attribute
+    //    {
+    //        public string Name { get; set; }
+    //    }
+
+    //    public class FallbackTypeMapper : SqlMapper.ITypeMap
+    //    {
+    //        private readonly IEnumerable<SqlMapper.ITypeMap> _mappers;
+
+    //        public FallbackTypeMapper(IEnumerable<SqlMapper.ITypeMap> mappers)
+    //        {
+    //            _mappers = mappers;
+    //        }
+
+
+    //        public ConstructorInfo FindConstructor(string[] names, Type[] types)
+    //        {
+    //            foreach (var mapper in _mappers)
+    //            {
+    //                try
+    //                {
+    //                    ConstructorInfo result = mapper.FindConstructor(names, types);
+    //                    if (result != null)
+    //                    {
+    //                        return result;
+    //                    }
+    //                }
+    //                catch (NotImplementedException)
+    //                {
+    //                }
+    //            }
+    //            return null;
+    //        }
+
+    //        public SqlMapper.IMemberMap GetConstructorParameter(ConstructorInfo constructor, string columnName)
+    //        {
+    //            foreach (var mapper in _mappers)
+    //            {
+    //                try
+    //                {
+    //                    var result = mapper.GetConstructorParameter(constructor, columnName);
+    //                    if (result != null)
+    //                    {
+    //                        return result;
+    //                    }
+    //                }
+    //                catch (NotImplementedException)
+    //                {
+    //                }
+    //            }
+    //            return null;
+    //        }
+
+    //        public SqlMapper.IMemberMap GetMember(string columnName)
+    //        {
+    //            foreach (var mapper in _mappers)
+    //            {
+    //                try
+    //                {
+    //                    var result = mapper.GetMember(columnName);
+    //                    if (result != null)
+    //                    {
+    //                        return result;
+    //                    }
+    //                }
+    //                catch (NotImplementedException)
+    //                {
+    //                }
+    //            }
+    //            return null;
+    //        }
+    //    }
+
+    //}
+
+    //public static IEnumerable LoadWithCustomMapping()
+    //{
+    //    using (var conn = OpenDBConnection())
+    //    {
+    //        Dapper.SqlMapper.SetTypeMap(typeof(MyArea), new ColumnAttributeTypeMapper());
+    //        return conn.Query("SELECT TOP 10 CAID,CAName,En FROM CityArea");
+    //    }
+    //}
+
+    //#endregion
+
+
+    private DataSet ResolveDataSet(byte[] buffer)
         {
             var ds = new DataSet();
 
@@ -200,6 +311,62 @@ namespace SQLiteImportForms
             if (obj is DataSet) return (DataSet)obj;
 
             return ds;
+        }
+
+        /// <summary>    
+        /// 实体转换辅助类    
+        /// </summary>    
+        public class ModelConvertHelper<T> where T : new()
+        {
+            public static IList<T> ConvertToModel(DataTable dt)
+            {
+                // 定义集合    
+                IList<T> ts = new List<T>();
+
+                // 获得此模型的类型   
+                Type type = typeof(T);
+                string tempName = "";
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    T t = new T();
+                    // 获得此模型的公共属性      
+                    PropertyInfo[] propertys = t.GetType().GetProperties();
+                    foreach (PropertyInfo pi in propertys)
+                    {
+                        tempName = pi.Name;  // 检查DataTable是否包含此列    
+
+                        if (dt.Columns.Contains(tempName))
+                        {
+                            // 判断此属性是否有Setter      
+                            if (!pi.CanWrite) continue;
+
+                            string value = dr[tempName].ToString();
+                            if (string.IsNullOrEmpty(value)) continue;
+
+                            if (pi.PropertyType == typeof(Guid))
+                            {
+                                pi.SetValue(t, new Guid(value.ToString()), null);
+                                continue;
+                            }
+                            if (pi.PropertyType.BaseType == typeof(Enum))
+                            {
+                                pi.SetValue(t, Convert.ToInt32(value), null);
+                                continue;
+                            }
+                            if (pi.PropertyType == typeof(bool))
+                            {
+                                pi.SetValue(t, Convert.ToBoolean(Convert.ToInt32(value)), null);
+                                continue;
+                            }
+
+                            pi.SetValue(t, Convert.ChangeType(value, pi.PropertyType), null);
+                        }
+                    }
+                    ts.Add(t);
+                }
+                return ts;
+            }
         }
 
         private void TestWebRequest()

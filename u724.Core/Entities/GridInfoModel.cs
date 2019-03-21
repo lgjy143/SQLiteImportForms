@@ -1,6 +1,6 @@
-﻿using System;
+﻿using DapperExtensions.Mapper;
+using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
 namespace u724.Core.Entities
@@ -9,7 +9,6 @@ namespace u724.Core.Entities
     /// 实体类GridInfoModel 表 HYGRID_GRIDINFO
     /// </summary>
     [DataContract]
-    [Table("HYGRID_GridInfo")]
     public class GridInfoModel
     {
         #region 构造函数
@@ -22,7 +21,7 @@ namespace u724.Core.Entities
         /// 主键（32guid）
         /// </summary>
         [DataMember]
-        public Guid Auid { get; set; }
+        public string Auid { get; set; }
         /// <summary>
         /// 表格名称
         /// </summary>
@@ -148,6 +147,20 @@ namespace u724.Core.Entities
             HYDistConnectionString = 26
 
 
+        }
+    }
+
+    public class ClassOrmMapper : ClassMapper<GridInfoModel>
+    {
+        public ClassOrmMapper()
+        {
+            base.Table("HYGRID_GridInfo");
+
+            //base.Map(f => f.Auid).Key(KeyType.Assigned);
+
+            //base.PropertyTypeKeyTypeMapping.Add(typeof(Guid), KeyType.Assigned);
+
+            AutoMap();
         }
     }
 }
