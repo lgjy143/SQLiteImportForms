@@ -3,9 +3,9 @@ using u724.Core.Entities;
 
 namespace u724.Core.Mapper
 {
-    public class GridInfoModelMapper : ClassMapper<GridInfoModel>
+    public class GridInfoModelMap : ClassMapper<GridInfoModel>
     {
-        public GridInfoModelMapper()
+        public GridInfoModelMap()
         {
             Table("HYGRID_GridInfo");
 

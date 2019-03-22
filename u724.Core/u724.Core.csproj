@@ -52,12 +52,16 @@
     <Compile Include="Entities\GridDetailBtnModel.cs" />
     <Compile Include="Entities\GridFieldModel.cs" />
     <Compile Include="Entities\GridInfoModel.cs" />
-    <Compile Include="Mapper\GridInfoModelMapper.cs" />
+    <Compile Include="Mapper\GridDetailBtnModelMap.cs" />
+    <Compile Include="Mapper\GridFieldModelMap.cs" />
+    <Compile Include="Mapper\GridInfoModelMap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Dapper\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
