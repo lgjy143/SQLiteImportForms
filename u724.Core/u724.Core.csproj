@@ -52,10 +52,12 @@
     <Compile Include="Entities\GridDetailBtnModel.cs" />
     <Compile Include="Entities\GridFieldModel.cs" />
     <Compile Include="Entities\GridInfoModel.cs" />
+    <Compile Include="Mapper\GridInfoModelMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
